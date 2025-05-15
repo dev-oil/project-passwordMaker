@@ -89,6 +89,7 @@
             this.check_special.TabIndex = 4;
             this.check_special.Text = "특수문자 포함 (!@#$)";
             this.check_special.UseVisualStyleBackColor = true;
+            this.check_special.CheckedChanged += new System.EventHandler(this.check_special_CheckedChanged);
             // 
             // button_generate
             // 

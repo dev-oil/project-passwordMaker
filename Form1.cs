@@ -82,30 +82,50 @@ namespace project_passwordMaker
 
         private string GeneratePassword(int length, bool upper, bool number, bool special)
         {
+            if (length < 4)
+                return "길이는 최소 4 이상!";
+
             string lowerChars = "abcdefghijklmnopqrstuvwxyz";
             string upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             string numberChars = "0123456789";
             string specialChars = "!@#$%^&*()-_+=";
 
-            string charPool = lowerChars;
-            if (upper) charPool += upperChars;
-            if (number) charPool += numberChars;
-            if (special) charPool += specialChars;
+            List<char> passwordChars = new List<char>();
+            StringBuilder charPool = new StringBuilder(lowerChars);
 
-            if (charPool.Length == 0)
-                return "문자셋 없음";
-
-            StringBuilder sb = new StringBuilder();
             Random rand = new Random();
 
-            for (int i = 0; i < length; i++)
+            // 조건별 1개 보장
+            if (upper)
             {
-                int index = rand.Next(charPool.Length);
-                sb.Append(charPool[index]);
+                passwordChars.Add(upperChars[rand.Next(upperChars.Length)]);
+                charPool.Append(upperChars);
             }
 
-            return sb.ToString();
+            if (number)
+            {
+                passwordChars.Add(numberChars[rand.Next(numberChars.Length)]);
+                charPool.Append(numberChars);
+            }
+
+            if (special)
+            {
+                passwordChars.Add(specialChars[rand.Next(specialChars.Length)]);
+                charPool.Append(specialChars);
+            }
+
+            // 나머지 자리수 채우기
+            while (passwordChars.Count < length)
+            {
+                passwordChars.Add(charPool[rand.Next(charPool.Length)]);
+            }
+
+            // 전체 섞기
+            passwordChars = passwordChars.OrderBy(x => rand.Next()).ToList();
+
+            return new string(passwordChars.ToArray());
         }
+
 
         private void button_copy_Click(object sender, EventArgs e)
         {
@@ -118,6 +138,11 @@ namespace project_passwordMaker
             {
                 MessageBox.Show("복사할 비밀번호가 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void check_special_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
